@@ -33,7 +33,7 @@ class Curriculo extends Model
             'superior_completo' => 'Ensino Superior Completo',
             'pos_graduacao' => 'Pós-graduação',
             'mestrado' => 'Mestrado',
-            'doutorado' => 'Doutorado'
+            'doutorado' => 'Doutorado',
         ];
 
         return $escolaridades[$this->escolaridade] ?? $this->escolaridade;

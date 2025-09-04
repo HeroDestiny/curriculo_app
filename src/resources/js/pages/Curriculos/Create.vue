@@ -115,9 +115,9 @@
                     </div>
 
                     <!-- Botões -->
-                    <div class="mt-8 flex justify-between items-center">
+                    <div class="mt-8 flex items-center justify-between">
                         <Button type="button" variant="outline" @click="voltarPaginaAnterior"> Voltar </Button>
-                        
+
                         <div class="flex space-x-4">
                             <Button type="button" variant="outline" @click="resetForm"> Limpar Formulário </Button>
                             <Button type="submit" :disabled="form.processing" class="bg-indigo-600 hover:bg-indigo-700">
@@ -144,7 +144,7 @@ interface Props {
     escolaridades: Record<string, string>;
 }
 
-const props = defineProps<Props>();
+const { escolaridades } = defineProps<Props>();
 
 const fileInput = ref<HTMLInputElement>();
 

@@ -130,7 +130,8 @@ interface Props {
     curriculo: Curriculo;
 }
 
-const props = defineProps<Props>();
+// Destructuring das props para uso no template
+const { curriculo } = defineProps<Props>();
 
 const formatarDataCompleta = (dataString: string) => {
     const data = new Date(dataString);
@@ -148,14 +149,14 @@ const voltarLista = () => {
 };
 
 const downloadArquivo = () => {
-    window.open(`/curriculos/${props.curriculo.id}/download`, '_blank');
+    window.open(`/curriculos/${curriculo.id}/download`, '_blank');
 };
 
 const entrarContato = () => {
-    const subject = encodeURIComponent(`Oportunidade de emprego - ${props.curriculo.cargo_desejado}`);
+    const subject = encodeURIComponent(`Oportunidade de emprego - ${curriculo.cargo_desejado}`);
     const body = encodeURIComponent(
-        `Olá ${props.curriculo.nome},\n\nEntramos em contato sobre seu currículo enviado para a vaga de ${props.curriculo.cargo_desejado}.\n\n`,
+        `Olá ${curriculo.nome},\n\nEntramos em contato sobre seu currículo enviado para a vaga de ${curriculo.cargo_desejado}.\n\n`,
     );
-    window.open(`mailto:${props.curriculo.email}?subject=${subject}&body=${body}`);
+    window.open(`mailto:${curriculo.email}?subject=${subject}&body=${body}`);
 };
 </script>

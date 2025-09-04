@@ -69,8 +69,9 @@
                                     'rounded-l-md': index === 0,
                                     'rounded-r-md': index === curriculos.links.length - 1,
                                 }"
-                                v-html="link.label"
-                            />
+                            >
+                                {{ link.label }}
+                            </component>
                         </template>
                     </nav>
                 </div>
@@ -115,7 +116,7 @@ interface Props {
     curriculos: PaginatedCurriculos;
 }
 
-const props = defineProps<Props>();
+const { curriculos } = defineProps<Props>();
 
 const formatarData = (dataString: string) => {
     const data = new Date(dataString);

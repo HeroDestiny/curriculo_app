@@ -26,7 +26,7 @@ return new class extends Migration
                 'superior_completo',
                 'pos_graduacao',
                 'mestrado',
-                'doutorado'
+                'doutorado',
             ]);
             $table->text('observacoes')->nullable();
             $table->string('arquivo_path');

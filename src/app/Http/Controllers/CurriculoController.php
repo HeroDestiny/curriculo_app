@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Curriculo;
 use App\Http\Requests\StoreCurriculoRequest;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Curriculo;
 use Inertia\Inertia;
 
 class CurriculoController extends Controller
@@ -21,11 +19,11 @@ class CurriculoController extends Controller
             'superior_completo' => 'Ensino Superior Completo',
             'pos_graduacao' => 'Pós-graduação',
             'mestrado' => 'Mestrado',
-            'doutorado' => 'Doutorado'
+            'doutorado' => 'Doutorado',
         ];
 
         return Inertia::render('Curriculos/Create', [
-            'escolaridades' => $escolaridades
+            'escolaridades' => $escolaridades,
         ]);
     }
 
@@ -35,7 +33,7 @@ class CurriculoController extends Controller
 
         // Upload do arquivo
         $arquivo = $request->file('arquivo');
-        $nomeArquivo = time() . '_' . $arquivo->getClientOriginalName();
+        $nomeArquivo = time().'_'.$arquivo->getClientOriginalName();
         $caminhoArquivo = $arquivo->storeAs('curriculos', $nomeArquivo, 'public');
 
         // Criar o registro no banco
@@ -65,28 +63,29 @@ class CurriculoController extends Controller
         // Adicionar escolaridade formatada para cada currículo
         $curriculos->getCollection()->transform(function ($curriculo) {
             $curriculo->escolaridade_formatada = $curriculo->escolaridade_formatada;
+
             return $curriculo;
         });
 
         return Inertia::render('Curriculos/Index', [
-            'curriculos' => $curriculos
+            'curriculos' => $curriculos,
         ]);
     }
 
     public function show(Curriculo $curriculo)
     {
         $curriculo->escolaridade_formatada = $curriculo->escolaridade_formatada;
-        
+
         return Inertia::render('Curriculos/Show', [
-            'curriculo' => $curriculo
+            'curriculo' => $curriculo,
         ]);
     }
 
     public function downloadArquivo(Curriculo $curriculo)
     {
-        $filePath = storage_path('app/public/' . $curriculo->arquivo_path);
-        
-        if (!file_exists($filePath)) {
+        $filePath = storage_path('app/public/'.$curriculo->arquivo_path);
+
+        if (! file_exists($filePath)) {
             abort(404, 'Arquivo não encontrado');
         }
 

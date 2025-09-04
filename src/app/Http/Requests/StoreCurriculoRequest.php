@@ -43,24 +43,24 @@ class StoreCurriculoRequest extends FormRequest
             'nome.required' => 'O nome é obrigatório.',
             'nome.min' => 'O nome deve ter pelo menos 2 caracteres.',
             'nome.max' => 'O nome não pode ter mais de 255 caracteres.',
-            
+
             'email.required' => 'O e-mail é obrigatório.',
             'email.email' => 'Por favor, insira um e-mail válido.',
             'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
-            
+
             'telefone.required' => 'O telefone é obrigatório.',
             'telefone.min' => 'O telefone deve ter pelo menos 8 caracteres.',
             'telefone.max' => 'O telefone não pode ter mais de 20 caracteres.',
-            
+
             'cargo_desejado.required' => 'O cargo desejado é obrigatório.',
             'cargo_desejado.min' => 'O cargo desejado deve ter pelo menos 2 caracteres.',
             'cargo_desejado.max' => 'O cargo desejado não pode ter mais de 255 caracteres.',
-            
+
             'escolaridade.required' => 'A escolaridade é obrigatória.',
             'escolaridade.in' => 'Selecione uma escolaridade válida.',
-            
+
             'observacoes.max' => 'As observações não podem ter mais de 1000 caracteres.',
-            
+
             'arquivo.required' => 'O arquivo de currículo é obrigatório.',
             'arquivo.file' => 'Por favor, envie um arquivo válido.',
             'arquivo.mimes' => 'O arquivo deve ser PDF, DOC ou DOCX.',
