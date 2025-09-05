@@ -2,8 +2,9 @@
     <div class="min-h-screen bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-2xl">
             <div class="mb-8 text-center">
-                <h1 class="mb-2 text-3xl font-bold text-gray-900">Envie seu Currículo</h1>
-                <p class="text-gray-600">Preencha o formulário abaixo para enviar seu currículo</p>
+                <h1 class="mb-2 text-3xl font-bold text-gray-900">🚀 Envie seu Currículo</h1>
+                <p class="text-lg text-gray-600">Dê o próximo passo na sua carreira conosco!</p>
+                <p class="mt-2 text-sm text-gray-500">Preencha o formulário abaixo com suas informações e anexe seu currículo atualizado</p>
             </div>
 
             <div class="rounded-lg bg-white p-8 shadow-lg">
@@ -12,7 +13,15 @@
                         <!-- Nome -->
                         <div class="md:col-span-2">
                             <Label for="nome" class="text-sm font-medium text-gray-700">Nome Completo *</Label>
-                            <Input id="nome" v-model="form.nome" type="text" class="mt-1" :class="{ 'border-red-500': form.errors.nome }" required />
+                            <Input
+                                id="nome"
+                                v-model="form.nome"
+                                type="text"
+                                class="mt-1"
+                                placeholder="Ex: João Silva dos Santos"
+                                :class="{ 'border-red-500': form.errors.nome }"
+                                required
+                            />
                             <InputError v-if="form.errors.nome" :message="form.errors.nome" />
                         </div>
 
@@ -24,6 +33,7 @@
                                 v-model="form.email"
                                 type="email"
                                 class="mt-1"
+                                placeholder="seu.email@exemplo.com"
                                 :class="{ 'border-red-500': form.errors.email }"
                                 required
                             />
@@ -40,6 +50,8 @@
                                 class="mt-1"
                                 :class="{ 'border-red-500': form.errors.telefone }"
                                 placeholder="(11) 99999-9999"
+                                @input="handlePhoneInput"
+                                maxlength="15"
                                 required
                             />
                             <InputError v-if="form.errors.telefone" :message="form.errors.telefone" />
@@ -53,6 +65,7 @@
                                 v-model="form.cargo_desejado"
                                 type="text"
                                 class="mt-1"
+                                placeholder="Ex: Desenvolvedor Full Stack, Analista de Marketing, Gerente de Vendas"
                                 :class="{ 'border-red-500': form.errors.cargo_desejado }"
                                 required
                             />
@@ -90,7 +103,11 @@
                                 :class="{ 'border-red-500': form.errors.arquivo }"
                                 required
                             />
-                            <p class="mt-1 text-sm text-gray-500">Máximo 5MB</p>
+                            <p class="mt-1 text-sm text-gray-500">
+                                📄 Formatos aceitos: PDF, DOC, DOCX • Tamanho máximo: 5MB
+                                <br />
+                                💡 Dica: Certifique-se de que seu currículo esteja atualizado com suas experiências mais recentes
+                            </p>
                             <InputError v-if="form.errors.arquivo" :message="form.errors.arquivo" />
                         </div>
 
@@ -103,15 +120,23 @@
                                 rows="4"
                                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 :class="{ 'border-red-500': form.errors.observacoes }"
-                                placeholder="Conte-nos um pouco mais sobre você..."
+                                placeholder="Conte-nos sobre sua experiência, habilidades especiais, disponibilidade ou qualquer informação adicional que considere importante..."
                             ></textarea>
+                            <p class="mt-1 text-sm text-gray-500">Opcional - Use este espaço para destacar pontos importantes do seu perfil</p>
                             <InputError v-if="form.errors.observacoes" :message="form.errors.observacoes" />
                         </div>
                     </div>
 
                     <!-- Data e hora de envio (apenas exibição) -->
-                    <div class="mt-6 rounded-md bg-gray-50 p-4">
-                        <p class="text-sm text-gray-600"><strong>Data e hora do envio:</strong> {{ formatarDataHora(new Date()) }}</p>
+                    <div class="mt-6 rounded-md border border-indigo-200 bg-indigo-50 p-4">
+                        <div class="flex items-center">
+                            <div class="mr-3 text-indigo-600">📅</div>
+                            <div>
+                                <p class="text-sm font-medium text-indigo-900">Data e hora do envio:</p>
+                                <p class="text-sm text-indigo-700">{{ formatarDataHora(new Date()) }}</p>
+                                <p class="mt-1 text-xs text-indigo-600">Seus dados serão tratados com segurança e confidencialidade</p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Botões -->
@@ -163,6 +188,27 @@ const handleFileChange = (event: Event) => {
     if (target.files && target.files[0]) {
         form.arquivo = target.files[0];
     }
+};
+
+// Função para aplicar máscara no telefone
+const handlePhoneInput = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    let value = target.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+
+    // Aplica a máscara baseada no tamanho do número
+    if (value.length <= 10) {
+        // Telefone fixo: (11) 1234-5678
+        value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+        value = value.replace(/^(\d{2})(\d{4})$/, '($1) $2');
+        value = value.replace(/^(\d{2})$/, '($1');
+    } else {
+        // Celular: (11) 99999-9999
+        value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+        value = value.replace(/^(\d{2})(\d{5})$/, '($1) $2');
+        value = value.replace(/^(\d{2})$/, '($1');
+    }
+
+    form.telefone = value;
 };
 
 const submitForm = () => {

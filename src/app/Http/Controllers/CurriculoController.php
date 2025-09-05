@@ -58,7 +58,20 @@ class CurriculoController extends Controller
 
     public function index()
     {
-        $curriculos = Curriculo::orderBy('created_at', 'desc')->paginate(15);
+        $search = request('search');
+
+        $query = Curriculo::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', '%'.$search.'%')
+                    ->orWhere('cargo_desejado', 'like', '%'.$search.'%')
+                    ->orWhere('email', 'like', '%'.$search.'%');
+            });
+        }
+
+        $curriculos = $query->orderBy('created_at', 'desc')->paginate(10);
+        $curriculos->appends(['search' => $search]);
 
         // Adicionar escolaridade formatada para cada currículo
         $curriculos->getCollection()->transform(function ($curriculo) {
@@ -69,6 +82,7 @@ class CurriculoController extends Controller
 
         return Inertia::render('Curriculos/Index', [
             'curriculos' => $curriculos,
+            'search' => $search,
         ]);
     }
 

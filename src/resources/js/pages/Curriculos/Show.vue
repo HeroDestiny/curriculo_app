@@ -78,7 +78,7 @@
                                             <span class="ml-2">{{ curriculo.arquivo_original_name }}</span>
                                         </div>
 
-                                        <Button variant="outline" size="sm" @click="downloadArquivo"> Download </Button>
+                                        <Button variant="outline" size="sm" @click="downloadArquivo">Download</Button>
                                     </div>
                                 </dd>
                             </div>
@@ -94,12 +94,12 @@
                 </div>
 
                 <div class="mt-8 flex justify-between">
-                    <Button variant="outline" @click="voltarLista"> ← Voltar à Lista </Button>
+                    <Button variant="outline" @click="voltarLista">← Voltar à Lista</Button>
 
                     <div class="space-x-4">
-                        <Button variant="outline" @click="downloadArquivo"> Download do Currículo </Button>
+                        <Button variant="outline" @click="downloadArquivo">Download do Currículo</Button>
 
-                        <Button @click="entrarContato" class="bg-indigo-600 hover:bg-indigo-700"> Entrar em Contato </Button>
+                        <Button @click="entrarContato" class="bg-indigo-600 hover:bg-indigo-700">Entrar em Contato</Button>
                     </div>
                 </div>
             </div>
