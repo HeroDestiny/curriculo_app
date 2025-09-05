@@ -18,11 +18,14 @@ class Curriculo extends Model
         'observacoes',
         'arquivo_path',
         'arquivo_original_name',
+        'ip_address',
+        'submitted_at',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'submitted_at' => 'datetime',
     ];
 
     public function getEscolaridadeFormatadaAttribute()

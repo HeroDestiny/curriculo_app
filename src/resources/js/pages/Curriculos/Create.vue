@@ -2,7 +2,10 @@
     <div class="min-h-screen bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
         <div class="mx-auto max-w-2xl">
             <div class="mb-8 text-center">
-                <h1 class="mb-2 text-3xl font-bold text-gray-900">🚀 Envie seu Currículo</h1>
+                <div class="mb-4 flex items-center justify-center">
+                    <Rocket class="mr-2 h-8 w-8 text-indigo-600" />
+                    <h1 class="text-3xl font-bold text-gray-900">Envie seu Currículo</h1>
+                </div>
                 <p class="text-lg text-gray-600">Dê o próximo passo na sua carreira conosco!</p>
                 <p class="mt-2 text-sm text-gray-500">Preencha o formulário abaixo com suas informações e anexe seu currículo atualizado</p>
             </div>
@@ -104,9 +107,14 @@
                                 required
                             />
                             <p class="mt-1 text-sm text-gray-500">
-                                📄 Formatos aceitos: PDF, DOC, DOCX • Tamanho máximo: 5MB
-                                <br />
-                                💡 Dica: Certifique-se de que seu currículo esteja atualizado com suas experiências mais recentes
+                                <span class="mb-1 flex items-center">
+                                    <FileText class="mr-1 h-4 w-4" />
+                                    Formatos aceitos: PDF, DOC, DOCX • Tamanho máximo: 5MB
+                                </span>
+                                <span class="flex items-center">
+                                    <Lightbulb class="mr-1 h-4 w-4" />
+                                    Dica: Certifique-se de que seu currículo esteja atualizado com suas experiências mais recentes
+                                </span>
                             </p>
                             <InputError v-if="form.errors.arquivo" :message="form.errors.arquivo" />
                         </div>
@@ -130,7 +138,7 @@
                     <!-- Data e hora de envio (apenas exibição) -->
                     <div class="mt-6 rounded-md border border-indigo-200 bg-indigo-50 p-4">
                         <div class="flex items-center">
-                            <div class="mr-3 text-indigo-600">📅</div>
+                            <Calendar class="mr-3 h-5 w-5 text-indigo-600" />
                             <div>
                                 <p class="text-sm font-medium text-indigo-900">Data e hora do envio:</p>
                                 <p class="text-sm text-indigo-700">{{ formatarDataHora(new Date()) }}</p>
@@ -163,6 +171,7 @@ import Button from '@/components/ui/button/Button.vue';
 import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
 import { useForm } from '@inertiajs/vue3';
+import { Calendar, FileText, Lightbulb, Rocket } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 interface Props {
@@ -195,17 +204,24 @@ const handlePhoneInput = (event: Event) => {
     const target = event.target as HTMLInputElement;
     let value = target.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
 
+    // Limita a 11 dígitos no máximo
+    if (value.length > 11) {
+        value = value.slice(0, 11);
+    }
+
     // Aplica a máscara baseada no tamanho do número
-    if (value.length <= 10) {
-        // Telefone fixo: (11) 1234-5678
-        value = value.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-        value = value.replace(/^(\d{2})(\d{4})$/, '($1) $2');
-        value = value.replace(/^(\d{2})$/, '($1');
+    if (value.length <= 2) {
+        // Apenas DDD: "84" -> "(84"
+        value = value.replace(/^(\d{1,2})/, '($1');
+    } else if (value.length <= 6) {
+        // DDD + início do número: "84999" -> "(84) 999"
+        value = value.replace(/^(\d{2})(\d{1,4})/, '($1) $2');
+    } else if (value.length <= 10) {
+        // Telefone fixo: 10 dígitos -> (XX) XXXX-XXXX
+        value = value.replace(/^(\d{2})(\d{4})(\d{1,4})/, '($1) $2-$3');
     } else {
-        // Celular: (11) 99999-9999
-        value = value.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-        value = value.replace(/^(\d{2})(\d{5})$/, '($1) $2');
-        value = value.replace(/^(\d{2})$/, '($1');
+        // Celular: 11 dígitos -> (XX) XXXXX-XXXX
+        value = value.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     }
 
     form.telefone = value;

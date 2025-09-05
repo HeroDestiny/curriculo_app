@@ -1,0 +1,62 @@
+# Laravel & PHP
+/src/vendor/
+/src/node_modules/
+/src/public/hot
+/src/public/storage
+/src/storage/*.key
+/src/.env
+/src/.env.backup
+/src/.phpunit.result.cache
+/src/Homestead.json
+/src/Homestead.yaml
+/src/npm-debug.log
+/src/yarn-error.log
+/src/.DS_Store
+
+# Laravel specific
+/src/bootstrap/cache/*.php
+/src/storage/app/*
+!/src/storage/app/.gitignore
+!/src/storage/app/public/
+/src/storage/framework/cache/*
+!/src/storage/framework/cache/.gitignore
+!/src/storage/framework/cache/data/
+/src/storage/framework/sessions/*
+!/src/storage/framework/sessions/.gitignore
+/src/storage/framework/testing/*
+!/src/storage/framework/testing/.gitignore
+/src/storage/framework/views/*
+!/src/storage/framework/views/.gitignore
+/src/storage/logs/*
+!/src/storage/logs/.gitignore
+
+# Node.js & Frontend
+node_modules/
+/src/public/build/
+/src/public/mix-manifest.json
+/src/mix-manifest.json
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Build artifacts
+/src/public/storage

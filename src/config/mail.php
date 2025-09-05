@@ -113,4 +113,19 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Email Addresses
+    |--------------------------------------------------------------------------
+    |
+    | Lista de e-mails dos administradores que receberão notificações
+    | quando novos currículos forem enviados através do sistema.
+    |
+    */
+
+    'admin_emails' => [
+        env('ADMIN_EMAIL_1', 'admin@exemplo.com'),
+        env('ADMIN_EMAIL_2', 'rh@exemplo.com'),
+    ],
+
 ];

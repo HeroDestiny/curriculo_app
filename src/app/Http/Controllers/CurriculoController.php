@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCurriculoRequest;
+use App\Mail\CurriculoRecebido;
 use App\Models\Curriculo;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class CurriculoController extends Controller
@@ -29,26 +33,95 @@ class CurriculoController extends Controller
 
     public function store(StoreCurriculoRequest $request)
     {
-        $validatedData = $request->validated();
+        try {
+            $validatedData = $request->validated();
 
-        // Upload do arquivo
-        $arquivo = $request->file('arquivo');
-        $nomeArquivo = time().'_'.$arquivo->getClientOriginalName();
-        $caminhoArquivo = $arquivo->storeAs('curriculos', $nomeArquivo, 'public');
+            // Upload do arquivo com validações adicionais
+            $arquivo = $request->file('arquivo');
 
-        // Criar o registro no banco
-        Curriculo::create([
-            'nome' => $validatedData['nome'],
-            'email' => $validatedData['email'],
-            'telefone' => $validatedData['telefone'],
-            'cargo_desejado' => $validatedData['cargo_desejado'],
-            'escolaridade' => $validatedData['escolaridade'],
-            'observacoes' => $validatedData['observacoes'],
-            'arquivo_path' => $caminhoArquivo,
-            'arquivo_original_name' => $arquivo->getClientOriginalName(),
-        ]);
+            // Verificação adicional de tipo MIME
+            $allowedMimeTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            ];
 
-        return redirect()->route('curriculos.sucesso')->with('success', 'Currículo enviado com sucesso!');
+            if (! in_array($arquivo->getMimeType(), $allowedMimeTypes)) {
+                return back()->withErrors([
+                    'arquivo' => 'Tipo de arquivo não permitido. Apenas PDF, DOC e DOCX são aceitos.',
+                ])->withInput();
+            }
+
+            // Verificação adicional de tamanho (1MB = 1048576 bytes)
+            if ($arquivo->getSize() > 1048576) {
+                return back()->withErrors([
+                    'arquivo' => 'O arquivo não pode ser maior que 1MB.',
+                ])->withInput();
+            }
+
+            // Gerar nome único para o arquivo
+            $nomeArquivo = time().'_'.uniqid().'.'.$arquivo->getClientOriginalExtension();
+            $caminhoArquivo = $arquivo->storeAs('curriculos', $nomeArquivo, 'public');
+
+            // Obter IP do usuário
+            $ipAddress = $request->ip();
+
+            // Se estiver atrás de um proxy (como Cloudflare), pegar o IP real
+            if ($request->header('CF-Connecting-IP')) {
+                $ipAddress = $request->header('CF-Connecting-IP');
+            } elseif ($request->header('X-Forwarded-For')) {
+                $ipAddress = explode(',', $request->header('X-Forwarded-For'))[0];
+            } elseif ($request->header('X-Real-IP')) {
+                $ipAddress = $request->header('X-Real-IP');
+            }
+
+            // Criar o registro no banco
+            $curriculo = Curriculo::create([
+                'nome' => $validatedData['nome'],
+                'email' => $validatedData['email'],
+                'telefone' => $validatedData['telefone'],
+                'cargo_desejado' => $validatedData['cargo_desejado'],
+                'escolaridade' => $validatedData['escolaridade'],
+                'observacoes' => $validatedData['observacoes'] ?? null,
+                'arquivo_path' => $caminhoArquivo,
+                'arquivo_original_name' => $arquivo->getClientOriginalName(),
+                'ip_address' => $ipAddress,
+                'submitted_at' => Carbon::now(),
+            ]);
+
+            // Enviar e-mail de notificação
+            try {
+                $emailsDestino = config('mail.admin_emails', ['admin@exemplo.com']);
+
+                foreach ($emailsDestino as $email) {
+                    Mail::to($email)->send(new CurriculoRecebido($curriculo));
+                }
+
+                Log::info('E-mail de currículo enviado com sucesso', [
+                    'curriculo_id' => $curriculo->id,
+                    'nome' => $curriculo->nome,
+                    'email' => $curriculo->email,
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Erro ao enviar e-mail de currículo', [
+                    'curriculo_id' => $curriculo->id,
+                    'error' => $e->getMessage(),
+                ]);
+                // Não falha a operação se o e-mail não for enviado
+            }
+
+            return redirect()->route('curriculos.sucesso')->with('success', 'Currículo enviado com sucesso!');
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar currículo', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return back()->withErrors([
+                'erro' => 'Ocorreu um erro interno. Tente novamente em alguns instantes.',
+            ])->withInput();
+        }
     }
 
     public function sucesso()
@@ -97,12 +170,48 @@ class CurriculoController extends Controller
 
     public function downloadArquivo(Curriculo $curriculo)
     {
-        $filePath = storage_path('app/public/'.$curriculo->arquivo_path);
+        try {
+            $filePath = storage_path('app/public/'.$curriculo->arquivo_path);
 
-        if (! file_exists($filePath)) {
-            abort(404, 'Arquivo não encontrado');
+            // Verificar se o arquivo existe
+            if (! file_exists($filePath)) {
+                Log::warning('Tentativa de download de arquivo inexistente', [
+                    'curriculo_id' => $curriculo->id,
+                    'arquivo_path' => $curriculo->arquivo_path,
+                ]);
+                abort(404, 'Arquivo não encontrado');
+            }
+
+            // Verificar se o caminho do arquivo está dentro do diretório permitido (segurança)
+            $realPath = realpath($filePath);
+            $allowedPath = realpath(storage_path('app/public/curriculos'));
+
+            if (! $realPath || ! str_starts_with($realPath, $allowedPath)) {
+                Log::warning('Tentativa de acesso a arquivo fora do diretório permitido', [
+                    'curriculo_id' => $curriculo->id,
+                    'arquivo_path' => $curriculo->arquivo_path,
+                    'real_path' => $realPath,
+                ]);
+                abort(403, 'Acesso negado');
+            }
+
+            // Log do download
+            Log::info('Download de currículo realizado', [
+                'curriculo_id' => $curriculo->id,
+                'nome' => $curriculo->nome,
+                'arquivo' => $curriculo->arquivo_original_name,
+                'user_ip' => request()->ip(),
+            ]);
+
+            return response()->download($filePath, $curriculo->arquivo_original_name);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao fazer download de currículo', [
+                'curriculo_id' => $curriculo->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            abort(500, 'Erro interno do servidor');
         }
-
-        return response()->download($filePath, $curriculo->arquivo_original_name);
     }
 }
