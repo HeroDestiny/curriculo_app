@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Rules\TelefoneBrasileiroRule;
-use Illuminate\Translation\PotentiallyTranslatedString;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -14,7 +13,7 @@ class TelefoneBrasileiroRuleTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->rule = new TelefoneBrasileiroRule();
+        $this->rule = new TelefoneBrasileiroRule;
     }
 
     #[Test]
@@ -168,7 +167,7 @@ class TelefoneBrasileiroRuleTest extends TestCase
         foreach ($dddsValidos as $ddd) {
             $telefone = sprintf('(%02d) 99999-9999', $ddd);
             $erro = null;
-            
+
             $this->rule->validate('telefone', $telefone, function ($mensagem) use (&$erro) {
                 $erro = $mensagem;
             });
@@ -177,4 +176,3 @@ class TelefoneBrasileiroRuleTest extends TestCase
         }
     }
 }
-

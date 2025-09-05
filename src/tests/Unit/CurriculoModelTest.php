@@ -27,7 +27,7 @@ class CurriculoModelTest extends TestCase
             'submitted_at',
         ];
 
-        $curriculo = new Curriculo();
+        $curriculo = new Curriculo;
 
         $this->assertEquals($fillable, $curriculo->getFillable());
     }
@@ -35,7 +35,7 @@ class CurriculoModelTest extends TestCase
     #[Test]
     public function casts_estao_definidos_corretamente()
     {
-        $curriculo = new Curriculo();
+        $curriculo = new Curriculo;
         $casts = $curriculo->getCasts();
 
         $this->assertArrayHasKey('created_at', $casts);
@@ -48,7 +48,7 @@ class CurriculoModelTest extends TestCase
     public function escolaridade_formatada_retorna_valor_correto()
     {
         $curriculo = Curriculo::factory()->make([
-            'escolaridade' => 'superior_completo'
+            'escolaridade' => 'superior_completo',
         ]);
 
         $this->assertEquals('Ensino Superior Completo', $curriculo->escolaridade_formatada);
@@ -58,7 +58,7 @@ class CurriculoModelTest extends TestCase
     public function escolaridade_formatada_retorna_valor_original_se_nao_encontrada()
     {
         $curriculo = Curriculo::factory()->make([
-            'escolaridade' => 'escolaridade_inexistente'
+            'escolaridade' => 'escolaridade_inexistente',
         ]);
 
         $this->assertEquals('escolaridade_inexistente', $curriculo->escolaridade_formatada);
@@ -81,10 +81,10 @@ class CurriculoModelTest extends TestCase
 
         foreach ($escolaridades as $valor => $esperado) {
             $curriculo = Curriculo::factory()->make([
-                'escolaridade' => $valor
+                'escolaridade' => $valor,
             ]);
 
-            $this->assertEquals($esperado, $curriculo->escolaridade_formatada, 
+            $this->assertEquals($esperado, $curriculo->escolaridade_formatada,
                 "Escolaridade {$valor} deveria retornar {$esperado}"
             );
         }

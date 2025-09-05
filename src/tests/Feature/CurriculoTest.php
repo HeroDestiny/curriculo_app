@@ -34,7 +34,7 @@ class CurriculoTest extends TestCase
     public function curriculo_pode_ser_enviado_com_dados_validos()
     {
         $arquivo = UploadedFile::fake()->create('curriculo.pdf', 512, 'application/pdf');
-        
+
         $dados = [
             'nome' => 'João Silva dos Santos',
             'email' => 'joao@exemplo.com',
@@ -48,7 +48,7 @@ class CurriculoTest extends TestCase
         $response = $this->post('/curriculos', $dados);
 
         $response->assertRedirect('/curriculos/sucesso');
-        
+
         $this->assertDatabaseHas('curriculos', [
             'nome' => 'João Silva dos Santos',
             'email' => 'joao@exemplo.com',
@@ -58,7 +58,7 @@ class CurriculoTest extends TestCase
             'observacoes' => 'Tenho experiência em Laravel e Vue.js',
         ]);
 
-        Storage::disk('public')->assertExists('curriculos/' . basename(Curriculo::first()->arquivo_path));
+        Storage::disk('public')->assertExists('curriculos/'.basename(Curriculo::first()->arquivo_path));
     }
 
     #[Test]
@@ -266,7 +266,7 @@ class CurriculoTest extends TestCase
 
         return array_merge([
             'nome' => 'João Silva dos Santos',
-            'email' => 'teste' . uniqid() . '@exemplo.com',
+            'email' => 'teste'.uniqid().'@exemplo.com',
             'telefone' => '(11) 99999-9999',
             'cargo_desejado' => 'Desenvolvedor Full Stack',
             'escolaridade' => 'superior_completo',
@@ -275,4 +275,3 @@ class CurriculoTest extends TestCase
         ], $sobrescrever);
     }
 }
-
