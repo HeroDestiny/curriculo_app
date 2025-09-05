@@ -21,7 +21,7 @@ class StoreCurriculoRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         // Normaliza o telefone para o formato correto antes da validação
-        if ($this->has('telefone')) {
+        if ($this->has('telefone') && $this->input('telefone') !== null) {
             $telefone = $this->input('telefone');
             $telefoneNormalizado = $this->normalizarTelefone($telefone);
 
