@@ -36,6 +36,7 @@ class CurriculoSeeder extends Seeder
             'cargo_desejado' => 'Desenvolvedor Full Stack',
             'escolaridade' => 'superior_completo',
             'observacoes' => 'Desenvolvedor experiente com foco em Laravel e Vue.js',
+            'ip_address' => '127.0.0.1',
         ]);
 
         $this->command->info('Currículos criados com sucesso!');

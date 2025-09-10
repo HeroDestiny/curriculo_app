@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\EscolaridadeEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -26,22 +27,16 @@ class Curriculo extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'submitted_at' => 'datetime',
+        'escolaridade' => EscolaridadeEnum::class,
     ];
 
     public function getEscolaridadeFormatadaAttribute()
     {
-        $escolaridades = [
-            'fundamental_incompleto' => 'Ensino Fundamental Incompleto',
-            'fundamental_completo' => 'Ensino Fundamental Completo',
-            'medio_incompleto' => 'Ensino Médio Incompleto',
-            'medio_completo' => 'Ensino Médio Completo',
-            'superior_incompleto' => 'Ensino Superior Incompleto',
-            'superior_completo' => 'Ensino Superior Completo',
-            'pos_graduacao' => 'Pós-graduação',
-            'mestrado' => 'Mestrado',
-            'doutorado' => 'Doutorado',
-        ];
+        if ($this->escolaridade instanceof EscolaridadeEnum) {
+            return $this->escolaridade->getLabel();
+        }
 
-        return $escolaridades[$this->escolaridade] ?? $this->escolaridade;
+        // Fallback para compatibilidade com dados antigos
+        return EscolaridadeEnum::options()[$this->escolaridade] ?? $this->escolaridade;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\EscolaridadeEnum;
 use App\Rules\TelefoneBrasileiroRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -93,7 +94,8 @@ class StoreCurriculoRequest extends FormRequest
             ],
             'escolaridade' => [
                 'required',
-                'in:fundamental_incompleto,fundamental_completo,medio_incompleto,medio_completo,superior_incompleto,superior_completo,pos_graduacao,mestrado,doutorado',
+                'string',
+                EscolaridadeEnum::validationRule(),
             ],
             'observacoes' => [
                 'nullable',

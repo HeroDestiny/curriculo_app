@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\EscolaridadeEnum;
 use App\Http\Requests\StoreCurriculoRequest;
 use App\Mail\CurriculoRecebido;
 use App\Models\Curriculo;
@@ -14,20 +15,8 @@ class CurriculoController extends Controller
 {
     public function create()
     {
-        $escolaridades = [
-            'fundamental_incompleto' => 'Ensino Fundamental Incompleto',
-            'fundamental_completo' => 'Ensino Fundamental Completo',
-            'medio_incompleto' => 'Ensino Médio Incompleto',
-            'medio_completo' => 'Ensino Médio Completo',
-            'superior_incompleto' => 'Ensino Superior Incompleto',
-            'superior_completo' => 'Ensino Superior Completo',
-            'pos_graduacao' => 'Pós-graduação',
-            'mestrado' => 'Mestrado',
-            'doutorado' => 'Doutorado',
-        ];
-
         return Inertia::render('Curriculos/Create', [
-            'escolaridades' => $escolaridades,
+            'escolaridades' => EscolaridadeEnum::options(),
         ]);
     }
 

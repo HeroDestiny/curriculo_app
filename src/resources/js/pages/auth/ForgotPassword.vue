@@ -16,8 +16,8 @@ defineProps<{
 </script>
 
 <template>
-    <AuthLayout title="Forgot password" description="Enter your email to receive a password reset link">
-        <Head title="Forgot password" />
+    <AuthLayout title="Esqueci a senha" description="Digite seu e-mail para receber um link de redefinição de senha">
+        <Head title="Esqueci a senha" />
 
         <div v-if="status" class="mb-4 text-center text-sm font-medium text-green-600">
             {{ status }}
@@ -26,22 +26,22 @@ defineProps<{
         <div class="space-y-6">
             <Form v-bind="PasswordResetLinkController.store.form()" v-slot="{ errors, processing }">
                 <div class="grid gap-2">
-                    <Label for="email">Email address</Label>
-                    <Input id="email" type="email" name="email" autocomplete="off" autofocus placeholder="email@example.com" />
+                    <Label for="email">Endereço de e-mail</Label>
+                    <Input id="email" type="email" name="email" autocomplete="off" autofocus placeholder="email@exemplo.com" />
                     <InputError :message="errors.email" />
                 </div>
 
                 <div class="my-6 flex items-center justify-start">
                     <Button class="w-full" :disabled="processing">
                         <LoaderCircle v-if="processing" class="h-4 w-4 animate-spin" />
-                        Email password reset link
+                        Enviar link de redefinição
                     </Button>
                 </div>
             </Form>
 
             <div class="space-x-1 text-center text-sm text-muted-foreground">
-                <span>Or, return to</span>
-                <TextLink :href="login()">log in</TextLink>
+                <span>Ou, voltar para</span>
+                <TextLink :href="login()">fazer login</TextLink>
             </div>
         </div>
     </AuthLayout>

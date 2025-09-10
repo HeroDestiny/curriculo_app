@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\EscolaridadeEnum;
 use App\Models\Curriculo;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -24,17 +25,7 @@ class CurriculoFactory extends Factory
      */
     public function definition(): array
     {
-        $escolaridades = [
-            'fundamental_incompleto',
-            'fundamental_completo',
-            'medio_incompleto',
-            'medio_completo',
-            'superior_incompleto',
-            'superior_completo',
-            'pos_graduacao',
-            'mestrado',
-            'doutorado',
-        ];
+        $escolaridades = EscolaridadeEnum::values();
 
         $cargosDesejados = [
             'Desenvolvedor Full Stack',
@@ -66,6 +57,8 @@ class CurriculoFactory extends Factory
             'observacoes' => fake('pt_BR')->optional(0.7)->paragraph(),
             'arquivo_path' => 'curriculos/'.$fileName,
             'arquivo_original_name' => $originalName,
+            'ip_address' => fake()->ipv4(),
+            'submitted_at' => fake()->dateTimeBetween('-1 month', 'now'),
         ];
     }
 

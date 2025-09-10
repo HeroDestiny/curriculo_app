@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('curriculos', function (Blueprint $table) {
-            $table->ipAddress('ip_address')->nullable()->after('arquivo_original_name');
-            $table->timestamp('submitted_at')->nullable()->after('ip_address');
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('is_admin')->default(false)->after('email_verified_at');
         });
     }
 
@@ -22,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('curriculos', function (Blueprint $table) {
-            $table->dropColumn(['ip_address', 'submitted_at']);
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('is_admin');
         });
     }
 };

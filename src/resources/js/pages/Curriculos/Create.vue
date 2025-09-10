@@ -141,7 +141,7 @@
                             <Calendar class="mr-3 h-5 w-5 text-indigo-600" />
                             <div>
                                 <p class="text-sm font-medium text-indigo-900">Data e hora do envio:</p>
-                                <p class="text-sm text-indigo-700">{{ formatarDataHora(new Date()) }}</p>
+                                <p class="text-sm text-indigo-700">{{ formatarDataHora(currentDateTime) }}</p>
                                 <p class="mt-1 text-xs text-indigo-600">Seus dados serão tratados com segurança e confidencialidade</p>
                             </div>
                         </div>
@@ -172,7 +172,7 @@ import Input from '@/components/ui/input/Input.vue';
 import Label from '@/components/ui/label/Label.vue';
 import { useForm } from '@inertiajs/vue3';
 import { Calendar, FileText, Lightbulb, Rocket } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 interface Props {
     escolaridades: Record<string, string>;
@@ -181,6 +181,21 @@ interface Props {
 const { escolaridades } = defineProps<Props>();
 
 const fileInput = ref<HTMLInputElement>();
+const currentDateTime = ref(new Date());
+let timeInterval: ReturnType<typeof setInterval> | null = null;
+
+// Atualiza a data/hora a cada minuto
+onMounted(() => {
+    timeInterval = setInterval(() => {
+        currentDateTime.value = new Date();
+    }, 1000); // Atualiza a cada segundo
+});
+
+onUnmounted(() => {
+    if (timeInterval) {
+        clearInterval(timeInterval);
+    }
+});
 
 const form = useForm({
     nome: '',

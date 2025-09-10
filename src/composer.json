@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "portal-curriculos/app",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Sistema completo de gestão de currículos desenvolvido com Laravel 11 e Vue 3.",
     "keywords": [
         "laravel",
-        "framework"
+        "vue3",
+        "curriculos",
+        "rh"
     ],
     "license": "MIT",
     "require": {
