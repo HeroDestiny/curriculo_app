@@ -6,22 +6,34 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { dashboard } from '@/routes';
 import { index as curriculosIndex } from '@/routes/curriculos';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { BookOpen, FileText, Folder, LayoutGrid } from 'lucide-vue-next';
+import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Currículos',
-        href: curriculosIndex(),
-        icon: FileText,
-    },
-];
+const page = usePage();
+const user = computed(() => page.props.auth?.user);
+
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Dashboard',
+            href: dashboard(),
+            icon: LayoutGrid,
+        },
+    ];
+
+    // Adicionar Currículos apenas se o usuário for admin
+    if (user.value?.is_admin) {
+        items.push({
+            title: 'Currículos',
+            href: curriculosIndex(),
+            icon: FileText,
+        });
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {

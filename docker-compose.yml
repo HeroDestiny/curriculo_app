@@ -1,0 +1,96 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: curriculo_app
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+      - "5173:5173"  # Vite dev server
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_DATABASE=${DB_DATABASE:-curriculo_app}
+      - DB_USERNAME=${DB_USERNAME:-curriculo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+      - CACHE_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - SESSION_DRIVER=redis
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailhog
+      - MAIL_PORT=1025
+      - MAIL_ENCRYPTION=null
+      - MAIL_FROM_ADDRESS=dev@curriculos.local
+      - MAIL_FROM_NAME="Sistema de Curriculos"
+    volumes:
+      # Monta o código fonte para desenvolvimento com hot-reload
+      - ./src:/var/www/html:cached
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - curriculo_network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: curriculo_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=${DB_DATABASE:-curriculo_app}
+      - POSTGRES_USER=${DB_USERNAME:-curriculo_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-curriculo_user} -d ${DB_DATABASE:-curriculo_app}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - curriculo_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: curriculo_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - curriculo_network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: curriculo_mailhog
+    restart: unless-stopped
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - curriculo_network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  curriculo_network:
+    driver: bridge

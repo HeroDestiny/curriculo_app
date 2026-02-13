@@ -1,8 +1,60 @@
 # Portal de Currículos
 
-Sistema completo de gestão de currículos desenvolvido com Laravel 11 e Vue 3, permitindo o envio, visualização e gerenciamento de currículos com interface moderna.
+Sistema completo de gestão de currículos desenvolvido com Laravel 12 e Vue 3, permitindo o envio, visualização e gerenciamento de currículos com interface moderna.
 
-## Requisitos
+## 🚀 Início Rápido com Docker (Recomendado)
+
+### 1. Copiar arquivo de ambiente
+
+```powershell
+Copy-Item .env.docker .env
+```
+
+### 2. Iniciar containers
+
+```powershell
+docker-compose up -d --build
+```
+
+> ℹ️ A `APP_KEY` será gerada automaticamente
+
+### 3. Acessar aplicação
+
+- **Aplicação**: http://localhost:8000
+- **MailHog** (visualizar e-mails): http://localhost:8025
+
+📚 Para mais detalhes sobre Docker, consulte [DOCKER.md](DOCKER.md).
+
+---
+
+## 📦 Serviços Docker
+
+- **Laravel 12** + **PHP 8.2** + **Nginx**
+- **PostgreSQL 16** - Banco de dados
+- **Redis 7** - Cache e sessões
+- **MailHog** - Captura de e-mails para testes
+
+## 🛠️ Comandos Docker Úteis
+
+```powershell
+# Ver logs
+docker-compose logs -f
+
+# Acessar shell
+docker-compose exec app bash
+
+# Executar migrations
+docker-compose exec app php artisan migrate
+
+# Parar containers
+docker-compose down
+```
+
+---
+
+## Instalação Manual (Sem Docker)
+
+### Requisitos
 
 - PHP 8.2 ou superior
 - Composer
